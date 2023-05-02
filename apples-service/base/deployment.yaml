@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apples-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apples-service
+  template:
+    metadata:
+      labels:
+        app: apples-service
+    spec:
+      containers:
+        - name: apples-service
+          image: ghcr.io/rw-gitops-demo/apples-service:1.0.0
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP

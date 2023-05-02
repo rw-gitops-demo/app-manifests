@@ -1,0 +1,59 @@
+name: CD
+
+run-name: Deploy ${{ inputs.service-name }} ${{ inputs.tag-name }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      service-name:
+        required: true
+        type: choice
+        options:
+          - apples-service
+      registry:
+        required: false
+        default: ghcr.io
+      image-name:
+        required: true
+      tag-name:
+        required: true
+
+jobs:
+  deploy-to-dev:
+    runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy
+        uses: ./.github/templates/deploy
+        with:
+          env: dev
+          service-name: ${{ inputs.service-name }}
+          registry: ${{ inputs.registry }}
+          image-name: ${{ inputs.image-name }}
+          tag-name: ${{ inputs.tag-name }}
+
+  deploy-to-prod:
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: write
+    needs: deploy-to-dev
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy
+        uses: ./.github/templates/deploy
+        with:
+          env: prod
+          service-name: ${{ inputs.service-name }}
+          registry: ${{ inputs.registry }}
+          image-name: ${{ inputs.image-name }}
+          tag-name: ${{ inputs.tag-name }}

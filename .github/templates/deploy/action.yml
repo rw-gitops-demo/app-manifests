@@ -1,0 +1,46 @@
+name: deploy
+description: The steps to perform a GitOps deploy update
+
+inputs:
+  env:
+    description: The environment alias, e.g. dev, prod
+    required: true
+  service-name:
+    description: The name of the service to deploy
+    required: true
+  registry:
+    description: The Docker image registry
+    required: true
+  image-name:
+    description: The Docker image name
+    required: true
+  tag-name:
+    description: The Docker image tag name
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Set git config
+      shell: bash
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+
+    - name: Pull changes
+      shell: bash
+      run: |
+        git pull
+
+    - name: Update image
+      shell: bash
+      run: |
+        cd ${{ inputs.service-name }}/envs/${{ inputs.env }}
+        kustomize edit set image ${{ inputs.service-name }}=${{ inputs.registry }}/${{ inputs.image-name }}:${{ inputs.tag-name }}
+
+    - name: Push changes
+      shell: bash
+      run: |
+        git commit -am "feat: [${{ inputs.env }}] update ${{ inputs.service-name }} image to ${{ inputs.tag-name }}"
+        git push
