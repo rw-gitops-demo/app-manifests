@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: apples-service
-          image: ghcr.io/rw-gitops-demo/apples-service:1.0.0
+          image: apples-service:latest
           ports:
             - name: http
               containerPort: 3000
