@@ -9,4 +9,4 @@ spec:
         - name: apples-service
           env:
             - name: COLOUR
-              value: red
+              value: purple
