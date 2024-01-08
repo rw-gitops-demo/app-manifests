@@ -10,4 +10,4 @@ patches:
 images:
 - name: apples-service
   newName: ghcr.io/rw-gitops-demo/apples-service
-  newTag: 1.0.5
+  newTag: 1.0.6
